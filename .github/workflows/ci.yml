@@ -49,14 +49,21 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 8️⃣ Tag Docker image for ECR
+      # 8️⃣ Tag Docker image (commit SHA + latest)
       - name: Tag Docker image
         run: |
-          docker tag fastapi-demo:${{ github.sha }} \
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}
+
+          # Tag with commit SHA
+          docker tag fastapi-demo:${{ github.sha }} $IMAGE_URI:${{ github.sha }}
+
+          # Tag with latest
+          docker tag fastapi-demo:${{ github.sha }} $IMAGE_URI:latest
 
       # 9️⃣ Push image to ECR
       - name: Push image to ECR
         run: |
-          docker push \
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}
+
+          docker push $IMAGE_URI:${{ github.sha }}
+          docker push $IMAGE_URI:latest
