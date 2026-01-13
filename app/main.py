@@ -5,4 +5,4 @@ app=FastAPI(title="CICD_Demo")
 app.include_router(health_router)
 @app.get("/")
 def welcome():
-    return {"message": "FastAPI CI/CD running 🚀"}
+    return {"message": "FastAPI CI/CD running 🚀 YAY"}
